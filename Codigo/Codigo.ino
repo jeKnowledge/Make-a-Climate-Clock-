@@ -4,11 +4,10 @@
 
 // Date and time functions using a DS1307 RTC connected via I2C and Wire lib
 #include "RTClib.h"
-#include <LiquidCrystal_I2C.h>
+#include "LiquidCrystal_I2C.h"
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 RTC_DS1307 rtc;
 
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 void setup () {
   Serial.begin(57600);
@@ -19,14 +18,14 @@ void setup () {
   while (!Serial); // wait for serial port to connect. Needed for native USB
 #endif
 
-  if (! rtc.begin()) { //tenta começar o rtc
+  if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
     lcd.print("Não foi encontrado o LCD."); // se vires isto no LCD, verifica as ligações do LCD e tenta novamente.
     Serial.flush();
     abort();
   }
 
-  if (! rtc.isrunning()) { //verifica se este esta a correr corretamente
+  if (! rtc.isrunning()) {
     Serial.println("RTC is NOT running, let's set the time!");
     lcd.print("RTC is NOT running!"); // se vires isto no LCD, verifica as ligações do RTC e tenta novamente.
 
@@ -51,7 +50,6 @@ void loop () {
     DateTime limit = DateTime(2029, 7, 21, 1, 46, 0); //data limite
     TimeSpan future =limit-now; //diferença de tempos
 
-    lcd.setCursor(0, 0);
     Serial.print("Current Date: ");
     Serial.print(now.year(), DEC);
     Serial.print('/');
@@ -79,7 +77,7 @@ void loop () {
     Serial.print(limit.second(), DEC);
     Serial.println();
 
-
+    lcd.setCursor(0, 0);
     //escrever anos 
     lcd.print(future.days()/365, DEC);
     lcd.print("Y ");
@@ -89,10 +87,17 @@ void loop () {
 
     lcd.setCursor(0, 1); //ir para a linha de baixo
     //escrever as horas restantes neste formato "HORAS:MINUTOS:SEGUNDOS"
-    lcd.print(future.hours(), DEC); 
+    printlcd(future.hours());
     lcd.print(':');
-    lcd.print(future.minutes(), DEC);
+    printlcd(future.minutes());
     lcd.print(':');
-    lcd.print(future.seconds(), DEC);
+    printlcd(future.seconds());
     delay(1000); //espera 1 segundo até voltar a atualizar!
+}
+
+//funcao para dar print a 0's antes do numero
+void printlcd(uint16_t val)
+{
+    if (val < 10) lcd.print("0"); // se o numero for menor que 10, adiciona um 0 antes de dar print
+    lcd.print(val);
 }
