@@ -1,11 +1,11 @@
-//Now the connections are ready. 
+ //Now the connections are ready. 
 //Please refer to the description of the video
 //for the code and live project simulator link!
 
 // Date and time functions using a DS1307 RTC connected via I2C and Wire lib
-#include "RTClib.h"
-#include "LiquidCrystal_I2C.h"
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+#include <RTClib.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 1);
 RTC_DS1307 rtc;
 
 
